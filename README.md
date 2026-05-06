@@ -35,6 +35,6 @@ Push to `main`. The Pages workflow takes ~30 seconds to publish. Live at
 
 ## License
 
-Site copy © 2026 Noetic. The HTML structure / CSS is MIT-licensed for your
+Site copy © 2026 Tony Gao. The HTML structure / CSS is MIT-licensed for your
 reference, but please don't lift the privacy / terms wording verbatim — write
 your own based on what your app actually does.
