@@ -71,7 +71,7 @@
     </p>
     <ul>
       <li><strong>Data leaves your device:</strong> Never. We do not transmit HealthKit data anywhere.</li>
-      <li><strong>Storage:</strong> Daily aggregates are cached in a private SQLite store inside GridKit's app sandbox so widgets can render without re-querying. The cache is removed when you uninstall the app.</li>
+      <li><strong>Storage:</strong> Daily aggregates are cached as a JSON file inside GridKit's app-group container, which is shared only between the GridKit app and its home-screen / lock-screen widget extension on your device — no other app can read it. The cache is removed when you uninstall GridKit.</li>
       <li><strong>Permission:</strong> You grant access via the standard iOS HealthKit prompt. You can revoke it at any time in <code>Settings → Privacy &amp; Security → Health → GridKit</code>.</li>
     </ul>
 
@@ -84,16 +84,22 @@
       <code>/v1/charges</code> endpoint and aggregate daily totals for display.
     </p>
     <ul>
-      <li><strong>What we read:</strong> Charge amount, currency, status, capture state,
-        dispute state, and creation timestamp — only for the purpose of rendering
-        a daily-revenue heatmap. We do not read customer details, payment-method
-        details, or anything outside the charge object.</li>
+      <li><strong>What we read:</strong> Per charge, we decode only these fields:
+        <code>id</code>, <code>amount</code>, <code>amount_refunded</code>,
+        <code>currency</code>, <code>created</code> (timestamp), <code>paid</code>,
+        <code>status</code>, <code>captured</code>, and <code>disputed</code>.
+        These are used to compute net daily revenue (paid &amp; succeeded &amp;
+        captured &amp; not-disputed charges, sum of <code>amount &minus; amount_refunded</code>,
+        bucketed by day in your local timezone). We do not read customer details,
+        payment-method details, descriptions, metadata, or anything outside the
+        charge object.</li>
       <li><strong>Token storage:</strong> Your access token is stored in your iOS
         Keychain (encrypted at rest, protected by your device passcode/biometrics).
         It never leaves your device after the OAuth handshake.</li>
       <li><strong>Aggregate storage:</strong> Daily totals (date → amount) are
-        cached in GridKit's app sandbox so widgets can render offline. Individual
-        charge records are not retained.</li>
+        cached as a JSON file in GridKit's app-group container so widgets can
+        render offline. Individual charge records are not retained beyond
+        the immediate aggregation pass.</li>
       <li><strong>Disconnect:</strong> Use <em>Settings → Integrations → Disconnect
         Stripe</em> in the app, or revoke GridKit's access at
         <a href="https://dashboard.stripe.com/settings/connected_accounts" rel="noopener">dashboard.stripe.com/settings/connected_accounts</a>.
@@ -120,8 +126,9 @@
 
     <h3>Manual entries</h3>
     <p>
-      When you tap to log a manual count, the entry is written to GridKit's local
-      SwiftData store inside the app sandbox. It is never transmitted off-device.
+      When you tap to log a manual count, the entry is written to GridKit's
+      local SwiftData (SQLite) store inside the app's private container. It is
+      never transmitted off-device.
     </p>
 
     <h2>Our backend (Cloudflare Worker)</h2>
