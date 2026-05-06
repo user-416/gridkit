@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy policy — GridKit</title>
+  <meta name="description" content="GridKit privacy policy. Health data stays on your device. Stripe and Strava use scoped read-only OAuth tokens stored in your iOS Keychain.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="3"  y="3"  width="6" height="6" rx="1.2" fill="#a7f3d0"/>
+          <rect x="11" y="3"  width="6" height="6" rx="1.2" fill="#34d399"/>
+          <rect x="19" y="3"  width="6" height="6" rx="1.2" fill="#10b981"/>
+          <rect x="3"  y="11" width="6" height="6" rx="1.2" fill="#10b981"/>
+          <rect x="11" y="11" width="6" height="6" rx="1.2" fill="#047857"/>
+          <rect x="19" y="11" width="6" height="6" rx="1.2" fill="#10b981"/>
+          <rect x="3"  y="19" width="6" height="6" rx="1.2" fill="#34d399"/>
+          <rect x="11" y="19" width="6" height="6" rx="1.2" fill="#10b981"/>
+          <rect x="19" y="19" width="6" height="6" rx="1.2" fill="#a7f3d0"/>
+        </svg>
+        GridKit
+      </a>
+      <nav class="primary">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#integrations">Integrations</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </header>
+
+  <article class="legal">
+    <h1>Privacy policy</h1>
+    <p class="updated">Last updated: 6 May 2026</p>
+
+    <p>
+      GridKit is an iOS app that displays personal KPI data — steps, workouts, revenue,
+      activity minutes, manual counts — as a contribution-graph heatmap. This page
+      explains what data we receive, where it goes, how long it stays, and what
+      choices you have.
+    </p>
+
+    <p>
+      <strong>Short version:</strong> Apple Health data never leaves your iPhone.
+      Stripe and Strava data is fetched directly from those services using your own
+      read-only OAuth token (stored in your iOS Keychain) and cached on-device only.
+      Our small Cloudflare Worker exists only to relay OAuth handshakes — it doesn't
+      store, analyze, or transmit your data to anyone.
+    </p>
+
+    <h2>Who we are</h2>
+    <p>
+      GridKit is built and operated by Noetic ("we", "us", "our") — a sole-proprietor
+      software project run by Tony Gao. You can reach us at
+      <a href="mailto:tony@getnoetic.ai">tony@getnoetic.ai</a>.
+      This policy covers the GridKit iOS app and our auxiliary Cloudflare Worker
+      that supports it.
+    </p>
+
+    <h2>Data we receive, by source</h2>
+
+    <h3>Apple Health (HealthKit)</h3>
+    <p>
+      With your explicit permission, GridKit reads daily aggregates from HealthKit:
+      step count and workout duration. These reads happen entirely inside the iOS
+      HealthKit framework on your device.
+    </p>
+    <ul>
+      <li><strong>Data leaves your device:</strong> Never. We do not transmit HealthKit data anywhere.</li>
+      <li><strong>Storage:</strong> Daily aggregates are cached in a private SQLite store inside GridKit's app sandbox so widgets can render without re-querying. The cache is removed when you uninstall the app.</li>
+      <li><strong>Permission:</strong> You grant access via the standard iOS HealthKit prompt. You can revoke it at any time in <code>Settings → Privacy &amp; Security → Health → GridKit</code>.</li>
+    </ul>
+
+    <h3>Stripe</h3>
+    <p>
+      With your explicit permission, GridKit uses Stripe's Connect OAuth flow to
+      receive a <em>read-only</em> access token scoped to your Stripe account
+      (specifically, the <code>read_only</code> scope, which permits reading charges
+      and refunds and nothing else). We use that token to call Stripe's
+      <code>/v1/charges</code> endpoint and aggregate daily totals for display.
+    </p>
+    <ul>
+      <li><strong>What we read:</strong> Charge amount, currency, status, capture state,
+        dispute state, and creation timestamp — only for the purpose of rendering
+        a daily-revenue heatmap. We do not read customer details, payment-method
+        details, or anything outside the charge object.</li>
+      <li><strong>Token storage:</strong> Your access token is stored in your iOS
+        Keychain (encrypted at rest, protected by your device passcode/biometrics).
+        It never leaves your device after the OAuth handshake.</li>
+      <li><strong>Aggregate storage:</strong> Daily totals (date → amount) are
+        cached in GridKit's app sandbox so widgets can render offline. Individual
+        charge records are not retained.</li>
+      <li><strong>Disconnect:</strong> Use <em>Settings → Integrations → Disconnect
+        Stripe</em> in the app, or revoke GridKit's access at
+        <a href="https://dashboard.stripe.com/settings/connected_accounts" rel="noopener">dashboard.stripe.com/settings/connected_accounts</a>.
+        Either path clears local tokens and stops further reads.</li>
+    </ul>
+
+    <h3>Strava</h3>
+    <p>
+      With your explicit permission, GridKit uses Strava's OAuth flow to receive a
+      read-only access token scoped to <code>activity:read</code>. We use that token
+      to fetch your activity list and compute daily activity-minute totals.
+    </p>
+    <ul>
+      <li><strong>What we read:</strong> Activity ID, type, start time, and elapsed
+        time — only for the purpose of rendering a daily activity-minutes heatmap.
+        We do not read GPS routes, heart-rate streams, segment efforts, or social
+        graph data.</li>
+      <li><strong>Token storage:</strong> Same as Stripe — Keychain, encrypted at rest,
+        never leaves your device after the OAuth handshake.</li>
+      <li><strong>Disconnect:</strong> Use <em>Settings → Integrations → Disconnect
+        Strava</em> in the app, or revoke GridKit at
+        <a href="https://www.strava.com/settings/apps" rel="noopener">strava.com/settings/apps</a>.</li>
+    </ul>
+
+    <h3>Manual entries</h3>
+    <p>
+      When you tap to log a manual count, the entry is written to GridKit's local
+      SwiftData store inside the app sandbox. It is never transmitted off-device.
+    </p>
+
+    <h2>Our backend (Cloudflare Worker)</h2>
+    <p>
+      GridKit operates a small server-side function on
+      <a href="https://workers.cloudflare.com" rel="noopener">Cloudflare Workers</a>
+      whose only job is to complete OAuth token exchanges with Stripe and Strava.
+      This is necessary because Stripe and Strava require their respective
+      <em>client_secret</em> values during the OAuth handshake, and those secrets
+      cannot safely ship inside an iOS app binary.
+    </p>
+    <p>The Worker:</p>
+    <ul>
+      <li>Receives the OAuth <code>code</code> from Stripe or Strava.</li>
+      <li>Exchanges it with the upstream service for an access token, using the
+        client secret it holds.</li>
+      <li>Hands the token back to your device via a deep-link redirect.</li>
+      <li>Does not log access tokens, request bodies, or response bodies.</li>
+      <li>Does not retain any state about you between requests. There is no
+        database; the Worker is stateless.</li>
+      <li>Does not track, profile, or analytics-instrument users.</li>
+    </ul>
+    <p>
+      Cloudflare itself, as our infrastructure provider, may log basic request
+      metadata (IP address, request timestamp) for abuse-prevention and
+      operational purposes per
+      <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Cloudflare's privacy policy</a>.
+    </p>
+
+    <h2>Data we do <em>not</em> collect</h2>
+    <ul>
+      <li>We do not run analytics or telemetry SDKs in the app.</li>
+      <li>We do not collect device identifiers (IDFA, IDFV) for tracking purposes.</li>
+      <li>We do not collect crash reports automatically. (If you opt-in to share
+        diagnostics with Apple via iOS Settings, those are handled by Apple, not us.)</li>
+      <li>We do not have user accounts. No email, no password, no profile.</li>
+      <li>We do not sell, rent, or share data with third parties for any purpose.</li>
+      <li>We do not show ads, and there is no ad network embedded.</li>
+    </ul>
+
+    <h2>Sharing and disclosure</h2>
+    <p>
+      We do not share your personal data with third parties, except:
+    </p>
+    <ul>
+      <li><strong>Service providers necessary to operate the app:</strong> Cloudflare
+        (the Worker host), Stripe (your own Stripe account, via OAuth), and Strava
+        (your own Strava account, via OAuth). In each case, the data flow is your
+        device ↔ that service; we are not in the middle.</li>
+      <li><strong>If required by law:</strong> If we receive a valid legal demand
+        we cannot in good conscience refuse, we may disclose what we have. Note
+        that what we have is essentially nothing — there are no user records on
+        our side to produce.</li>
+    </ul>
+
+    <h2>Retention</h2>
+    <p>
+      All on-device caches live for as long as the app is installed and you remain
+      connected to a given integration. Disconnecting an integration clears its
+      cached data. Uninstalling GridKit removes everything.
+    </p>
+    <p>
+      Our Worker retains nothing between requests.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      GridKit is not directed to children under 13 (or under 16 in the EU/UK).
+      If you are under that age, do not use GridKit. We do not knowingly receive
+      data from children.
+    </p>
+
+    <h2>Your rights</h2>
+    <p>
+      Because we operate no user database and store no personal data on our
+      servers, the practical mechanism for exercising your data rights is on your
+      device:
+    </p>
+    <ul>
+      <li><strong>Access &amp; portability:</strong> Your data lives in the source
+        services (Apple Health, Stripe, Strava) — those services provide their
+        own export tools.</li>
+      <li><strong>Deletion:</strong> Disconnect each integration in
+        <em>Settings → Integrations</em>, then uninstall GridKit. All on-device
+        caches are removed.</li>
+      <li><strong>Revocation:</strong> Revoke our OAuth grants directly at
+        <a href="https://dashboard.stripe.com/settings/connected_accounts" rel="noopener">Stripe</a>
+        and <a href="https://www.strava.com/settings/apps" rel="noopener">Strava</a>.</li>
+    </ul>
+    <p>
+      For any other request, write to
+      <a href="mailto:tony@getnoetic.ai">tony@getnoetic.ai</a>.
+    </p>
+
+    <h2>Security</h2>
+    <p>
+      OAuth tokens are stored in the iOS Keychain (encrypted at rest by the
+      Secure Enclave). All network traffic uses HTTPS. The Cloudflare Worker
+      uses signed CSRF state tokens during the OAuth handshake to prevent
+      authorization-code injection attacks.
+    </p>
+    <p>
+      No system is perfect. If you discover a vulnerability, please report it
+      privately to <a href="mailto:tony@getnoetic.ai">tony@getnoetic.ai</a> —
+      we'll credit you in the fix.
+    </p>
+
+    <h2>International users</h2>
+    <p>
+      The Cloudflare Worker runs on Cloudflare's global edge network. Your
+      OAuth handshake transits Cloudflare's nearest data center to you.
+      Because we don't store data, there is no cross-border transfer of
+      personal data attributable to GridKit beyond the round-trip required
+      to complete OAuth.
+    </p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+      If we make material changes (we add a new integration, change what we
+      read, etc.), we'll update this page and update the "Last updated" date
+      at the top. For substantive changes affecting how data is used, we'll
+      surface a one-time in-app notice the next time you open GridKit.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Tony Gao · <a href="mailto:tony@getnoetic.ai">tony@getnoetic.ai</a>
+    </p>
+  </article>
+
+  <footer class="site">
+    <div class="container">
+      <span>© 2026 GridKit. Built by Noetic.</span>
+      <nav>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="support.html">Support</a>
+        <a href="mailto:tony@getnoetic.ai">Contact</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
