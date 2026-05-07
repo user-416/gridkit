@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Support — GridKit</title>
-  <meta name="description" content="GridKit support — common fixes for Stripe, Strava, and Apple Health connection issues, plus how to reach us.">
+  <meta name="description" content="GridKit support — common fixes for Strava and Apple Health connection issues, plus how to reach us.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -46,14 +46,6 @@
 
     <h2>Common fixes</h2>
 
-    <h3>"Connect with Stripe" doesn't return to the app</h3>
-    <p>
-      Make sure you're tapping <em>Connect my account</em> on Stripe's consent
-      screen and not closing the web view manually. If the in-app browser stalls,
-      pull down to dismiss and try again — the OAuth state token is single-use
-      and may need to be regenerated.
-    </p>
-
     <h3>"Connect with Strava" shows a redirect_uri error</h3>
     <p>
       This usually means our Strava app configuration is mismatched on our side.
@@ -93,7 +85,6 @@
       You can also revoke access directly:
     </p>
     <ul>
-      <li>Stripe: <a href="https://dashboard.stripe.com/settings/connected_accounts" rel="noopener">dashboard.stripe.com/settings/connected_accounts</a></li>
       <li>Strava: <a href="https://www.strava.com/settings/apps" rel="noopener">strava.com/settings/apps</a></li>
       <li>Apple Health: <code>Settings → Privacy &amp; Security → Health → GridKit → Turn Off All</code></li>
     </ul>

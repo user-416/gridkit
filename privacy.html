@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy policy — GridKit</title>
-  <meta name="description" content="GridKit privacy policy. Health data stays on your device. Stripe and Strava use scoped read-only OAuth tokens stored in your iOS Keychain.">
+  <meta name="description" content="GridKit privacy policy. Health data stays on your device. Strava uses a scoped read-only OAuth token stored in your iOS Keychain.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -46,9 +46,9 @@
 
     <p>
       <strong>Short version:</strong> Apple Health data never leaves your iPhone.
-      Stripe and Strava data is fetched directly from those services using your own
+      Strava data is fetched directly from Strava using your own
       read-only OAuth token (stored in your iOS Keychain) and cached on-device only.
-      Our small Cloudflare Worker exists only to relay OAuth handshakes — it doesn't
+      Our small Cloudflare Worker exists only to relay the OAuth handshake — it doesn't
       store, analyze, or transmit your data to anyone.
     </p>
 
@@ -75,37 +75,6 @@
       <li><strong>Permission:</strong> You grant access via the standard iOS HealthKit prompt. You can revoke it at any time in <code>Settings → Privacy &amp; Security → Health → GridKit</code>.</li>
     </ul>
 
-    <h3>Stripe</h3>
-    <p>
-      With your explicit permission, GridKit uses Stripe's Connect OAuth flow to
-      receive a <em>read-only</em> access token scoped to your Stripe account
-      (specifically, the <code>read_only</code> scope, which permits reading charges
-      and refunds and nothing else). We use that token to call Stripe's
-      <code>/v1/charges</code> endpoint and aggregate daily totals for display.
-    </p>
-    <ul>
-      <li><strong>What we read:</strong> Per charge, we decode only these fields:
-        <code>id</code>, <code>amount</code>, <code>amount_refunded</code>,
-        <code>currency</code>, <code>created</code> (timestamp), <code>paid</code>,
-        <code>status</code>, <code>captured</code>, and <code>disputed</code>.
-        These are used to compute net daily revenue (paid &amp; succeeded &amp;
-        captured &amp; not-disputed charges, sum of <code>amount &minus; amount_refunded</code>,
-        bucketed by day in your local timezone). We do not read customer details,
-        payment-method details, descriptions, metadata, or anything outside the
-        charge object.</li>
-      <li><strong>Token storage:</strong> Your access token is stored in your iOS
-        Keychain (encrypted at rest, protected by your device passcode/biometrics).
-        It never leaves your device after the OAuth handshake.</li>
-      <li><strong>Aggregate storage:</strong> Daily totals (date → amount) are
-        cached as a JSON file in GridKit's app-group container so widgets can
-        render offline. Individual charge records are not retained beyond
-        the immediate aggregation pass.</li>
-      <li><strong>Disconnect:</strong> Use <em>Settings → Integrations → Disconnect
-        Stripe</em> in the app, or revoke GridKit's access at
-        <a href="https://dashboard.stripe.com/settings/connected_accounts" rel="noopener">dashboard.stripe.com/settings/connected_accounts</a>.
-        Either path clears local tokens and stops further reads.</li>
-    </ul>
-
     <h3>Strava</h3>
     <p>
       With your explicit permission, GridKit uses Strava's OAuth flow to receive a
@@ -117,8 +86,9 @@
         time — only for the purpose of rendering a daily activity-minutes heatmap.
         We do not read GPS routes, heart-rate streams, segment efforts, or social
         graph data.</li>
-      <li><strong>Token storage:</strong> Same as Stripe — Keychain, encrypted at rest,
-        never leaves your device after the OAuth handshake.</li>
+      <li><strong>Token storage:</strong> The access token is stored in your iOS Keychain
+        (encrypted at rest, protected by your device passcode/biometrics). It never
+        leaves your device after the OAuth handshake.</li>
       <li><strong>Disconnect:</strong> Use <em>Settings → Integrations → Disconnect
         Strava</em> in the app, or revoke GridKit at
         <a href="https://www.strava.com/settings/apps" rel="noopener">strava.com/settings/apps</a>.</li>
@@ -135,16 +105,14 @@
     <p>
       GridKit operates a small server-side function on
       <a href="https://workers.cloudflare.com" rel="noopener">Cloudflare Workers</a>
-      whose only job is to complete OAuth token exchanges with Stripe and Strava.
-      This is necessary because Stripe and Strava require their respective
-      <em>client_secret</em> values during the OAuth handshake, and those secrets
-      cannot safely ship inside an iOS app binary.
+      whose only job is to complete the Strava OAuth token exchange. This is
+      necessary because Strava requires a <em>client_secret</em> during the OAuth
+      handshake, and that secret cannot safely ship inside an iOS app binary.
     </p>
     <p>The Worker:</p>
     <ul>
-      <li>Receives the OAuth <code>code</code> from Stripe or Strava.</li>
-      <li>Exchanges it with the upstream service for an access token, using the
-        client secret it holds.</li>
+      <li>Receives the OAuth <code>code</code> from Strava.</li>
+      <li>Exchanges it with Strava for an access token, using the client secret it holds.</li>
       <li>Hands the token back to your device via a deep-link redirect.</li>
       <li>Does not log access tokens, request bodies, or response bodies.</li>
       <li>Does not retain any state about you between requests. There is no
@@ -175,9 +143,8 @@
     </p>
     <ul>
       <li><strong>Service providers necessary to operate the app:</strong> Cloudflare
-        (the Worker host), Stripe (your own Stripe account, via OAuth), and Strava
-        (your own Strava account, via OAuth). In each case, the data flow is your
-        device ↔ that service; we are not in the middle.</li>
+        (the Worker host) and Strava (your own Strava account, via OAuth). In both
+        cases, the data flow is your device ↔ that service; we are not in the middle.</li>
       <li><strong>If required by law:</strong> If we receive a valid legal demand
         we cannot in good conscience refuse, we may disclose what we have. Note
         that what we have is essentially nothing — there are no user records on
@@ -209,14 +176,12 @@
     </p>
     <ul>
       <li><strong>Access &amp; portability:</strong> Your data lives in the source
-        services (Apple Health, Stripe, Strava) — those services provide their
-        own export tools.</li>
+        services (Apple Health, Strava) — those services provide their own export tools.</li>
       <li><strong>Deletion:</strong> Disconnect each integration in
         <em>Settings → Integrations</em>, then uninstall GridKit. All on-device
         caches are removed.</li>
-      <li><strong>Revocation:</strong> Revoke our OAuth grants directly at
-        <a href="https://dashboard.stripe.com/settings/connected_accounts" rel="noopener">Stripe</a>
-        and <a href="https://www.strava.com/settings/apps" rel="noopener">Strava</a>.</li>
+      <li><strong>Revocation:</strong> Revoke our OAuth grant directly at
+        <a href="https://www.strava.com/settings/apps" rel="noopener">strava.com/settings/apps</a>.</li>
     </ul>
     <p>
       For any other request, write to
