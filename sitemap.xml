@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://user-416.github.io/gridkit/</loc><priority>1.0</priority></url>
-  <url><loc>https://user-416.github.io/gridkit/privacy.html</loc><priority>0.5</priority></url>
-  <url><loc>https://user-416.github.io/gridkit/terms.html</loc><priority>0.5</priority></url>
-  <url><loc>https://user-416.github.io/gridkit/support.html</loc><priority>0.5</priority></url>
+  <url><loc>https://user-416.github.io/widgets-site/</loc><priority>1.0</priority></url>
+  <url><loc>https://user-416.github.io/widgets-site/privacy.html</loc><priority>0.5</priority></url>
+  <url><loc>https://user-416.github.io/widgets-site/terms.html</loc><priority>0.5</priority></url>
+  <url><loc>https://user-416.github.io/widgets-site/support.html</loc><priority>0.5</priority></url>
 </urlset>

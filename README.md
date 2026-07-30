@@ -1,7 +1,7 @@
-# GridKit public site
+# Widgets public site
 
 Landing page, privacy policy, terms of service, and support docs for the
-[GridKit](https://user-416.github.io/gridkit/) iOS app. GridKit is a small app
+[Widgets](https://user-416.github.io/widgets-site/) iOS app. Widgets is a small app
 that shows daily numbers as a GitHub style contribution graph on your home
 screen.
 
@@ -30,7 +30,7 @@ python3 -m http.server 8000
 ## Deploy
 
 Push to `main`. The Pages workflow takes about 30 seconds to publish. Live at
-<https://user-416.github.io/gridkit/>.
+<https://user-416.github.io/widgets-site/>.
 
 ## License
 
