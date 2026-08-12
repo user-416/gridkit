@@ -1,7 +1,7 @@
 # Widgets public site
 
 Landing page, privacy policy, terms of service, and support docs for the
-[Widgets](https://user-416.github.io/widgets-site/) iOS app. Widgets is a small app
+[Widgets](https://twgao.github.io/widgets-site/) iOS app. Widgets is a small app
 that shows daily numbers as a GitHub style contribution graph on your home
 screen.
 
@@ -30,7 +30,7 @@ python3 -m http.server 8000
 ## Deploy
 
 Push to `main`. The Pages workflow takes about 30 seconds to publish. Live at
-<https://user-416.github.io/widgets-site/>.
+<https://twgao.github.io/widgets-site/>.
 
 ## License
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://user-416.github.io/widgets-site/sitemap.xml
+Sitemap: https://twgao.github.io/widgets-site/sitemap.xml
